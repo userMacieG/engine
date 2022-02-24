@@ -9,7 +9,7 @@ RegisterCommand(Config.Command, function()
 
 	engineRunning = not engineStatus
 
-	SetVehicleEngineOn(vehicle, engineRunning, true, true)
+	SetVehicleEngineOn(vehicle, engineRunning, Config.Instantly, Config.DisableAutoStart)
 end, false)
 RegisterKeyMapping(Config.Command, Config.Control.Name, "keyboard", Config.Control.Key)
 
@@ -24,11 +24,33 @@ Citizen.CreateThread(function()
 			currentVehicle = GetVehiclePedIsEntering(playerPed)
 			engineRunning = GetIsVehicleEngineRunning(currentVehicle)
 
-			SetVehicleEngineOn(currentVehicle, engineRunning, true, true)
+			if Config.DisableStartAfter.Entering then
+				SetVehicleEngineOn(currentVehicle, engineRunning, Config.Instantly, Config.DisableAutoStart)
+			end
 		elseif isInVehicle and not IsPedInAnyVehicle(playerPed, true) then
 			isInVehicle = false
 
-			SetVehicleEngineOn(currentVehicle, engineRunning, true, true)
+			SetVehicleEngineOn(currentVehicle, engineRunning, Config.Instantly, Config.DisableAutoStart)
+		end
+
+		if Config.DisableStartAfter.PressingW and isInVehicle and not engineRunning then
+			DisableControlAction(0, 71, true)
+		end
+	end
+end)
+
+RegisterNetEvent("engine:client:state", function(vehicle, state)
+	local playerPed = PlayerPedId()
+
+	if IsPedInAnyVehicle(playerPed, true) then
+		local _vehicle = vehicle and vehicle or GetVehiclePedIsIn(playerPed, false)
+
+		if currentVehicle == _vehicle then
+			engineRunning = state
+
+			SetVehicleEngineOn(currentVehicle, engineRunning, Config.Instantly, Config.DisableAutoStart)
+		else
+			SetVehicleEngineOn(_vehicle, state, Config.Instantly, Config.DisableAutoStart)
 		end
 	end
 end)
