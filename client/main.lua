@@ -18,16 +18,19 @@ Citizen.CreateThread(function()
 		Citizen.Wait(0)
 
 		local playerPed = PlayerPedId()
+		local isInAnyVehicle = IsPedInAnyVehicle(playerPed, true)
 
-		if not isInVehicle and IsPedInAnyVehicle(playerPed, true) then
+		if not isInVehicle and isInAnyVehicle then
+			local vehicleEntering = GetVehiclePedIsEntering(playerPed)
+
 			isInVehicle = true
-			currentVehicle = GetVehiclePedIsEntering(playerPed)
+			currentVehicle = vehicleEntering ~= 0 and vehicleEntering or GetVehiclePedIsIn(playerPed)
 			engineRunning = GetIsVehicleEngineRunning(currentVehicle)
 
 			if Config.DisableStartAfter.Entering then
 				SetVehicleEngineOn(currentVehicle, engineRunning, Config.Instantly, Config.DisableAutoStart)
 			end
-		elseif isInVehicle and not IsPedInAnyVehicle(playerPed, true) then
+		elseif isInVehicle and not isInAnyVehicle then
 			isInVehicle = false
 
 			SetVehicleEngineOn(currentVehicle, engineRunning, Config.Instantly, Config.DisableAutoStart)
@@ -43,14 +46,12 @@ RegisterNetEvent("engine:client:state", function(vehicle, state)
 	local playerPed = PlayerPedId()
 
 	if IsPedInAnyVehicle(playerPed, true) then
-		local _vehicle = vehicle and vehicle or GetVehiclePedIsIn(playerPed, false)
-
-		if currentVehicle == _vehicle then
+		if currentVehicle == vehicle then
 			engineRunning = state
-
-			SetVehicleEngineOn(currentVehicle, engineRunning, Config.Instantly, Config.DisableAutoStart)
-		else
-			SetVehicleEngineOn(_vehicle, state, Config.Instantly, Config.DisableAutoStart)
 		end
+
+		SetVehicleEngineOn(vehicle, state, Config.Instantly, Config.DisableAutoStart)
+	end
+		SetVehicleEngineOn(vehicle, state, Config.Instantly, Config.DisableAutoStart)
 	end
 end)
