@@ -51,7 +51,7 @@ RegisterNetEvent("engine:client:state", function(vehicle, state)
 		end
 
 		SetVehicleEngineOn(vehicle, state, Config.Instantly, Config.DisableAutoStart)
-	end
+	else
 		SetVehicleEngineOn(vehicle, state, Config.Instantly, Config.DisableAutoStart)
 	end
 end)
