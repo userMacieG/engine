@@ -12,5 +12,5 @@ Config.DisableAutoStart = true
 
 Config.DisableStartAfter = {
     Entering = true,
-    PressingW = true
+    PressingKey = true
 }

@@ -36,8 +36,9 @@ Citizen.CreateThread(function()
 			SetVehicleEngineOn(currentVehicle, engineRunning, Config.Instantly, Config.DisableAutoStart)
 		end
 
-		if Config.DisableStartAfter.PressingW and isInVehicle and not engineRunning then
-			DisableControlAction(0, 71, true)
+		if Config.DisableStartAfter.PressingKey and isInVehicle and not engineRunning then
+			DisableControlAction(0, 71, true) -- INPUT_VEH_ACCELERATE
+			DisableControlAction(0, 72, true) -- INPUT_VEH_BRAKE
 		end
 	end
 end)
